@@ -1,7 +1,9 @@
 package com.aaron.bibleversebootcamp;
 
 import java.util.Scanner;
+import java.io.FileReader;
 
+import com.google.gson.*;
 import com.aaron.bibleversebootcamp.model.*; // Importing the classes that model different parts of the bible
 
 public class Main {
@@ -88,7 +90,7 @@ public class Main {
 
         while(userBible == null) {
             // API Call
-            userBible = bibleService.getBibleTranslations(userTranslation, userTranslationLanguage);
+            userBible = bibleService.getBibleTranslation(userTranslation, userTranslationLanguage);
     
             // Checks if this is the desired translation.
             System.out.println("Result found for: " + userBible.name + " (" + userBible.abbreviation + ")");
@@ -112,7 +114,27 @@ public class Main {
     public static String getBibleID() {
         return userBible.id;
     }
+    public static String verseShortener(String bookName, int chapterNumber, int verseNumber) throws Exception{
+        // This method shortens something like Genesis 1:1 to GEN.1.1
 
+        bookName = bookName.strip();
+        String bookAbbreviation = "";
+
+        JsonArray books = JsonParser.parseReader(new FileReader("BookAbbreviation.json")).getAsJsonArray();
+        for(JsonElement element : books) {
+            JsonObject object = element.getAsJsonObject();
+            if(object.get("name").getAsString().equalsIgnoreCase(bookName)) {
+                bookAbbreviation = object.get("abbr").getAsString();
+            } 
+        }
+
+        if(bookAbbreviation.equals("")) {
+            return "";
+        }
+
+        return bookAbbreviation.toUpperCase() + "." + chapterNumber + "." + verseNumber;
+    }
+    
     // These methods are the four the user can do in the home screen
     public static void addVerses() {
 

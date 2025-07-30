@@ -42,8 +42,8 @@ public class BibleService {
         return response;
     }
 
-    public Bible getBibleTranslations(String userTranslation, String userLanguage) {
-        // This method is in charge of getting a list of available bibles to reference from.
+    public Bible getBibleTranslation(String userTranslation, String userLanguage) {
+        // This method is in charge of getting the bible the user wants"=
 
         try {
             HttpResponse<String> response = APIRequest(baseURL + "/v1/bibles");
