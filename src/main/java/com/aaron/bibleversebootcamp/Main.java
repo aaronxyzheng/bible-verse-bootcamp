@@ -2,10 +2,16 @@ package com.aaron.bibleversebootcamp;
 
 import java.util.Scanner;
 
+import com.aaron.bibleversebootcamp.model.*;
+
 public class Main {
 
     public static Scanner scanner = new Scanner(System.in);
+    public static BibleService bibleService;
     public static void main(String[] args) {
+
+        bibleService = new BibleService();
+
         clearScreen();
         intro();
         homeScreen();
@@ -64,10 +70,55 @@ public class Main {
 
             }
         }
+        System.out.println();
     }
     
+    public static String getBibleID() {
+
+        Bible user_bible = null;
+        boolean correctBible = false;
+
+        while(user_bible==null) {
+
+            System.out.println("What Bible Translation would you like to use?");
+            String userTranslation = scanner.nextLine();
+
+            System.out.println("What language is it in? English, Spanish, Chinese etc.");
+            String userLanguage = scanner.nextLine();
+
+            user_bible = bibleService.getBibleTranslations(userTranslation, userLanguage);
+
+            if(user_bible == null) {
+                System.out.println("Translation not found. Please try again.");
+                continue;
+            }
+
+            System.out.println("Result found for: " + user_bible.name + " (" + user_bible.abbreviation + ")");
+            System.out.println("Is this the bible you're look for? (y/n)");
+
+            while(!correctBible) {
+                String userValidation = scanner.nextLine().strip().toLowerCase();
+                if(userValidation.equals("y")) {
+                    correctBible = true;
+                } else if(userValidation.equals("n")) {
+                    System.out.println("Please try again then.");
+                    break;
+                } else {
+                    System.out.println("You have inputed something other than 'y' or 'n'");
+                }
+            }
+            
+
+        }
+
+        return user_bible.id;
+
+    }
+
     public static void addVerses() {
-        System.out.println("This will be coded up later");
+
+        System.out.println(getBibleID());
+        
     }
     
     public static void viewVerses() {

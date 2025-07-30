@@ -1,4 +1,4 @@
-package com.aaron.bibleversebootcamp;
+package com.aaron.bibleversebootcamp.model;
 
 public class BibleVerse {
     String bookName;
