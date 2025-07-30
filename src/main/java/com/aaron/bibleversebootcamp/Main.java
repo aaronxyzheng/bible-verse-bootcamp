@@ -1,7 +1,8 @@
 package com.aaron.bibleversebootcamp;
 
 import java.util.Scanner;
-import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import com.google.gson.*;
 import com.aaron.bibleversebootcamp.model.*; // Importing the classes that model different parts of the bible
@@ -14,6 +15,8 @@ public class Main {
 
     public static String userTranslation;
     public static String userTranslationLanguage;
+
+    public static final String baseURL = "https://api.scripture.api.bible";
 
     public static void main(String[] args) {
 
@@ -92,6 +95,10 @@ public class Main {
             // API Call
             userBible = bibleService.getBibleTranslation(userTranslation, userTranslationLanguage);
     
+            if(userBible == null) {
+                continue;
+            }
+
             // Checks if this is the desired translation.
             System.out.println("Result found for: " + userBible.name + " (" + userBible.abbreviation + ")");
             System.out.println("Is this the bible you're look for? (y/n)");
@@ -114,16 +121,30 @@ public class Main {
     public static String getBibleID() {
         return userBible.id;
     }
-    public static String verseShortener(String bookName, int chapterNumber, int verseNumber) throws Exception{
+    public static String verseFormater(String verseInput) throws Exception{
         // This method shortens something like Genesis 1:1 to GEN.1.1
+        String book;
+        int chapter;
+        int verse;
 
-        bookName = bookName.strip();
+        if(Character.isDigit(verseInput.charAt(0))) {
+            book = verseInput.split(" ")[0] + " " + verseInput.split(" ")[1];
+            chapter = Integer.parseInt(verseInput.split(" ")[2].split(":")[0]);
+            verse = Integer.parseInt(verseInput.split(" ")[2].split(":")[1]);
+        } else {
+            book = verseInput.split(" ")[0];
+            chapter = Integer.parseInt(verseInput.split(" ")[1].split(":")[0]);
+            verse = Integer.parseInt(verseInput.split(" ")[1].split(":")[1]);
+        }
+
         String bookAbbreviation = "";
 
-        JsonArray books = JsonParser.parseReader(new FileReader("BookAbbreviation.json")).getAsJsonArray();
+
+        InputStream is = Main.class.getClassLoader().getResourceAsStream("BookAbbreviation.json");
+        JsonArray books = JsonParser.parseReader(new InputStreamReader(is)).getAsJsonArray();
         for(JsonElement element : books) {
             JsonObject object = element.getAsJsonObject();
-            if(object.get("name").getAsString().equalsIgnoreCase(bookName)) {
+            if(object.get("name").getAsString().equalsIgnoreCase(book)) {
                 bookAbbreviation = object.get("abbr").getAsString();
             } 
         }
@@ -132,7 +153,7 @@ public class Main {
             return "";
         }
 
-        return bookAbbreviation.toUpperCase() + "." + chapterNumber + "." + verseNumber;
+        return bookAbbreviation.toUpperCase() + "." + chapter + "." + verse;
     }
     
     // These methods are the four the user can do in the home screen
@@ -145,7 +166,32 @@ public class Main {
         System.out.println("This will be coded up later");
     }  
     public static void referenceVerses() {
-        System.out.println("This will be coded up later");
+        String bibleID = getBibleID();
+        String verseID = "";
+        
+        String searchedVerse = "";
+   
+        while(verseID.equals("")){
+            System.out.println("What verse would you like to view? (Format: John 3:16)");
+            String userInput = scanner.nextLine();
+            
+            try {
+                verseID = verseFormater(userInput);
+            } catch (Exception e) {
+                System.err.println("There was an error: " + e.getMessage());
+                System.out.println("Are you sure you're inputing your verse correctly?");
+            }
+        }
+        
+        while(searchedVerse.equals("")) {
+            try {
+                searchedVerse = BibleService.APIRequest(baseURL + "/v1/bibles/" + bibleID + "/verses/" + verseID).body();
+            } catch (Exception e) {
+                System.err.println("There was an error: " + e.getMessage());
+            }
+        }
+        
+        System.out.println(searchedVerse);
     }  
     public static void practiceVerses() {
         System.out.println("This will be coded up later");

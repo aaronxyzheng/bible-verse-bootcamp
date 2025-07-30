@@ -16,7 +16,7 @@ public class BibleService {
 
     // API Stuff
     private static final String API_KEY = System.getenv("BIBLE_API_KEY"); 
-    private static final String baseURL = "https://api.scripture.api.bible";
+    private static final String BASE_URL = "https://api.scripture.api.bible";
     
 
     public Gson gson = new Gson();
@@ -31,7 +31,7 @@ public class BibleService {
         
     }
 
-    private static HttpResponse<String> APIRequest(String url) throws IOException, InterruptedException {
+    public static HttpResponse<String> APIRequest(String url) throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
             .uri(URI.create(url))
@@ -46,7 +46,7 @@ public class BibleService {
         // This method is in charge of getting the bible the user wants"=
 
         try {
-            HttpResponse<String> response = APIRequest(baseURL + "/v1/bibles");
+            HttpResponse<String> response = APIRequest(BASE_URL + "/v1/bibles");
 
             BibleResponse bibleResponse = gson.fromJson(response.body(), BibleResponse.class);
 
