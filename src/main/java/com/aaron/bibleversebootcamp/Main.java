@@ -2,17 +2,16 @@ package com.aaron.bibleversebootcamp;
 
 import java.util.Scanner;
 
-import com.aaron.bibleversebootcamp.model.*;
+import com.aaron.bibleversebootcamp.model.*; // Importing the classes that model different parts of the bible
 
 public class Main {
 
     public static Scanner scanner = new Scanner(System.in);
-    public static BibleService bibleService;
+    public static BibleService bibleService = new BibleService();
+
     public static void main(String[] args) {
 
-        bibleService = new BibleService();
-
-        clearScreen();
+        clearScreen(); // Resets the Terminal
         intro();
         homeScreen();
 
@@ -74,25 +73,32 @@ public class Main {
     }
     
     public static String getBibleID() {
+        // This method gets the API.bible ID for the User's desired Bible Translation.
 
+        // Values to make sure the method repeats until desired translation is found.
         Bible user_bible = null;
         boolean correctBible = false;
 
         while(user_bible==null) {
+            // While no Bible is found 
 
+            // Gets User Translation
             System.out.println("What Bible Translation would you like to use?");
             String userTranslation = scanner.nextLine();
 
+            // Gets Translation Language - Reason: This is because there are translations that have the same abbreviation but different language. Like Thai KJV and the English KJV.
             System.out.println("What language is it in? English, Spanish, Chinese etc.");
             String userLanguage = scanner.nextLine();
 
+            // Calls the Method to get the bible translation
             user_bible = bibleService.getBibleTranslations(userTranslation, userLanguage);
 
-            if(user_bible == null) {
-                System.out.println("Translation not found. Please try again.");
+            // User_bible == null if there's an error or no bible is found
+            if(user_bible == null) { 
                 continue;
             }
 
+            // Checks if this is the desired translation.
             System.out.println("Result found for: " + user_bible.name + " (" + user_bible.abbreviation + ")");
             System.out.println("Is this the bible you're look for? (y/n)");
 
