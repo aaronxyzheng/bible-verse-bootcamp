@@ -45,7 +45,11 @@ public class BibleService {
 
             for(Bible bible : bibleResponse.data) {
 
-                if(bible.abbreviation.equalsIgnoreCase(userTranslation) && bible.language.name.equalsIgnoreCase(userLanguage)) {
+                if((bible.abbreviation.toUpperCase().endsWith(userTranslation.toUpperCase()) || // Checks if the User's translation is at the end like KJV in engKJV
+                    bible.abbreviation.toUpperCase().startsWith(userTranslation.toUpperCase()) || // Checks if the User's translations is at the front like KJV in KJVeng
+                    bible.abbreviation.equalsIgnoreCase(userTranslation)) &&  // Checks if the user's translation exactly matches
+                    bible.language.name.equalsIgnoreCase(userLanguage))
+                {
                     return bible;
                 }
             }
