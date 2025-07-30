@@ -8,20 +8,26 @@ public class Main {
 
     public static Scanner scanner = new Scanner(System.in);
     public static BibleService bibleService = new BibleService();
+    public static Bible userBible = null;
+
+    public static String userTranslation;
+    public static String userTranslationLanguage;
 
     public static void main(String[] args) {
 
         clearScreen(); // Resets the Terminal
         intro();
+        getUserTranslation();
         homeScreen();
 
         
     }
+    
+    // These methods have to do with Terminal Interface
     public static void clearScreen() {
         System.out.print("\033[H\033[2J");
         System.out.flush();
     }
-
     public static void intro() {
         // Intro of the program - Pretty self explanatory so idk why this would need a comment. Oh also if a future recruiter is looking at this comment please go to a newer project. This is one of my oldest projects. Also gimme a job.
 
@@ -30,8 +36,7 @@ public class Main {
         System.out.println("Your word is a lamp for my feet, a light on my path. Psalm 119:105 (NIV)");
         System.out.println();
         System.out.println();
-    }
-    
+    }  
     public static void homeScreen() {
         // Where the user chooses what to do
 
@@ -72,36 +77,25 @@ public class Main {
         System.out.println();
     }
     
-    public static String getBibleID() {
-        // This method gets the API.bible ID for the User's desired Bible Translation.
+    // These methods have to do with API and Logic
+    public static void getUserTranslation() {
+            
+        // Gets User Translation + Language
+        System.out.println("What Bible Translation would you like to use?");
+        userTranslation = scanner.nextLine();
+        System.out.println("What language is it in? English, Spanish, Chinese etc.");
+        userTranslationLanguage = scanner.nextLine();
 
-        // Values to make sure the method repeats until desired translation is found.
-        Bible user_bible = null;
-        boolean correctBible = false;
-
-        while(user_bible==null) {
-            // While no Bible is found 
-
-            // Gets User Translation
-            System.out.println("What Bible Translation would you like to use?");
-            String userTranslation = scanner.nextLine();
-
-            // Gets Translation Language - Reason: This is because there are translations that have the same abbreviation but different language. Like Thai KJV and the English KJV.
-            System.out.println("What language is it in? English, Spanish, Chinese etc.");
-            String userLanguage = scanner.nextLine();
-
-            // Calls the Method to get the bible translation
-            user_bible = bibleService.getBibleTranslations(userTranslation, userLanguage);
-
-            // User_bible == null if there's an error or no bible is found
-            if(user_bible == null) { 
-                continue;
-            }
-
+        while(userBible == null) {
+            // API Call
+            userBible = bibleService.getBibleTranslations(userTranslation, userTranslationLanguage);
+    
             // Checks if this is the desired translation.
-            System.out.println("Result found for: " + user_bible.name + " (" + user_bible.abbreviation + ")");
+            System.out.println("Result found for: " + userBible.name + " (" + userBible.abbreviation + ")");
             System.out.println("Is this the bible you're look for? (y/n)");
-
+    
+            boolean correctBible = false;
+    
             while(!correctBible) {
                 String userValidation = scanner.nextLine().strip().toLowerCase();
                 if(userValidation.equals("y")) {
@@ -113,28 +107,24 @@ public class Main {
                     System.out.println("You have inputed something other than 'y' or 'n'");
                 }
             }
-            
-
         }
-
-        return user_bible.id;
-
+    }
+    public static String getBibleID() {
+        return userBible.id;
     }
 
+    // These methods are the four the user can do in the home screen
     public static void addVerses() {
 
         System.out.println(getBibleID());
         
-    }
-    
+    }   
     public static void viewVerses() {
         System.out.println("This will be coded up later");
-    }
-    
+    }  
     public static void referenceVerses() {
         System.out.println("This will be coded up later");
-    }
-    
+    }  
     public static void practiceVerses() {
         System.out.println("This will be coded up later");
     }
