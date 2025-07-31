@@ -1,4 +1,7 @@
+// Package
 package com.aaron.bibleversebootcamp;
+// Classese that model a Bible, Bible Verses etc
+import com.aaron.bibleversebootcamp.model.*;
 // API
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -9,9 +12,6 @@ import java.io.IOException;
 // Inputs/Reading
 import java.io.InputStream;
 import java.io.InputStreamReader;
-
-import com.aaron.bibleversebootcamp.model.*;
-
 import com.google.gson.*;
 
 public class BibleService {
@@ -85,24 +85,15 @@ public class BibleService {
     // Getting Bible Verse
     public String verseFormater(String verseInput) throws Exception{
         // This method shortens something like Genesis 1:1 to GEN.1.1
-        String book;
-        int chapter;
-        int verse;
+        
+        String book = getVerseBook(verseInput);
+        int chapter = getVerseChapter(verseInput);
+        int verse = getVerseNumber(verseInput);
 
-        if(Character.isDigit(verseInput.charAt(0))) {
-            book = verseInput.split(" ")[0] + " " + verseInput.split(" ")[1];
-            chapter = Integer.parseInt(verseInput.split(" ")[2].split(":")[0]);
-            verse = Integer.parseInt(verseInput.split(" ")[2].split(":")[1]);
-        } else {
-            book = verseInput.split(" ")[0];
-            chapter = Integer.parseInt(verseInput.split(" ")[1].split(":")[0]);
-            verse = Integer.parseInt(verseInput.split(" ")[1].split(":")[1]);
-        }
-
-        String bookAbbreviation = "";
+        String bookAbbreviation = ""; // This gets returned
 
         
-        InputStream is = getClass().getClassLoader().getResourceAsStream("BookAbbreviation.json");
+        InputStream is = getClass().getClassLoader().getResourceAsStream("book-abbreviations.json");
         JsonArray books = JsonParser.parseReader(new InputStreamReader(is)).getAsJsonArray();
         for(JsonElement element : books) {
             JsonObject object = element.getAsJsonObject();
@@ -117,11 +108,13 @@ public class BibleService {
 
         return bookAbbreviation.toUpperCase() + "." + chapter + "." + verse;
     }
-    public String getVerseText(String userInput) throws Exception {
+    
+    // Gets different values given a verse string like "Romans 5:22"
+    public String getVerseText(String verseInput) throws Exception {
         
         // Gets API Responese for Verse Request
         String bibleID = currentBible.id;
-        String verseID = verseFormater(userInput);
+        String verseID = verseFormater(verseInput);
         String verseResponse = BibleService.APIRequest(BASE_URL + "/v1/bibles/" + bibleID + "/verses/" + verseID).body();
 
         // Turns API Response to readable verse
@@ -130,10 +123,40 @@ public class BibleService {
         verseText = verseText.replaceAll("<[^>]*>","").trim(); // Removes HTML
         verseText = verseText.replaceFirst("^\\d+", "").trim(); // Removes Digits in the front;
 
-        return verseText + "\n -" + userInput;
+        return verseText + "\n -" + verseInput;
 
     }
+    public String getVerseBook(String verseInput) throws Exception {
+        // Returns the book name of a verse string  ex: Galatians 5:20 --> Galatians
+        String book;
+        
+        if(Character.isDigit(verseInput.charAt(0))) {
+            book = verseInput.split(" ")[0] + " " + verseInput.split(" ")[1];
+        } else {
+            book = verseInput.split(" ")[0];
+        }
 
+        return book;
+    }
+    public int getVerseChapter(String verseInput) throws Exception {
+        int chapter;
+
+        if(Character.isDigit(verseInput.charAt(0))) {
+            chapter = Integer.parseInt(verseInput.split(" ")[2].split(":")[0]);
+        } else {
+            chapter = Integer.parseInt(verseInput.split(" ")[1].split(":")[0]);
+        }
+        return chapter;
+    }
+    public int getVerseNumber(String verseInput) throws Exception {
+        int verse;
+        if(Character.isDigit(verseInput.charAt(0))) {
+            verse = Integer.parseInt(verseInput.split(" ")[2].split(":")[1]);
+        } else {
+            verse = Integer.parseInt(verseInput.split(" ")[1].split(":")[1]);
+        }
+        return verse;
+    }
 }
 
 

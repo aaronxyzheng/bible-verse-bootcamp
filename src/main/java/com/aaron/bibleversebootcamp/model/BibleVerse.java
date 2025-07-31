@@ -1,11 +1,11 @@
 package com.aaron.bibleversebootcamp.model;
 
 public class BibleVerse {
-    String bookName;
-    int chapterNumber;
-    int verseNumber;
-    String verseContent;
-    String translation;
+    private String bookName;
+    private int chapterNumber;
+    private int verseNumber;
+    private String verseContent;
+    private String translation;
 
     public BibleVerse(String bookName, int chapterNumber, int verseNumber, String verseContent, String translation) {
         this.bookName = bookName;
@@ -13,6 +13,10 @@ public class BibleVerse {
         this.verseNumber = verseNumber;
         this.verseContent = verseContent;
         this.translation = translation;
+    }
+
+    public String getVerseText() {
+        return this.verseContent;
     }
 
     @Override

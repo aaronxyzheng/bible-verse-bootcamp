@@ -2,12 +2,18 @@ package com.aaron.bibleversebootcamp;
 
 import com.aaron.bibleversebootcamp.model.*;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.util.*;
+import java.lang.reflect.Type;
+
+import com.google.gson.*;
+import com.google.gson.reflect.TypeToken;
 
 public class FileService {
     private static final String DATA_DIRECTORY = "data";
     private static final String SAVED_VERSES = "saved-verses.json";
+
+    private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     public void initializeOnStartup() {
         // Creates the needed directories and files in case they don't exist
@@ -21,9 +27,33 @@ public class FileService {
             try {
                 savedVersesFile.createNewFile();
             } catch (IOException error) {
-                error.getStackTrace();
+                error.printStackTrace();
             }
             
         }
+    }
+    public void saveVerse(BibleVerse bibleVerse) throws IOException {
+        List<BibleVerse> verses = listVerses();
+
+        if(verses == null) {
+            verses = new ArrayList<BibleVerse>();
+        }
+
+        verses.add(bibleVerse);
+        try (Writer writer = new FileWriter(DATA_DIRECTORY + "/" + SAVED_VERSES)){
+            gson.toJson(verses, writer);
+        }
+    }
+
+    public List<BibleVerse> listVerses() throws IOException {
+        // Returns a List of BibleVerses
+
+        File file = new File(DATA_DIRECTORY + "/" + SAVED_VERSES);
+        if(!file.exists()) return new ArrayList<>(); // Sends back empty Array if there's no file. But there should be a file cause of initialize On Startup().
+        if(file.length() == 0) return new ArrayList<>(); // If nothing in it
+        try(Reader reader = new FileReader(DATA_DIRECTORY + "/" + SAVED_VERSES)) {
+            Type listType = new TypeToken<List<BibleVerse>>() {}.getType();
+            return gson.fromJson(reader, listType);
+        }  
     }
 }

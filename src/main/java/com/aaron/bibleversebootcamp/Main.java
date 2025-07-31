@@ -1,16 +1,21 @@
 package com.aaron.bibleversebootcamp;
 
+import com.aaron.bibleversebootcamp.model.*;
+
 import java.util.Scanner;
 
 public class Main {
 
     public static Scanner scanner = new Scanner(System.in);
     public static BibleService bibleService = new BibleService();
+    public static FileService fileService = new FileService();
 
     public static String userTranslation;
     public static String userTranslationLanguage;
 
     public static void main(String[] args) {
+
+        fileService.initializeOnStartup();
 
         clearScreen(); // Resets the Terminal
         intro();
@@ -113,9 +118,49 @@ public class Main {
 
     // These methods are the four the user can do in the home screen
     public static void addVerses() {
+        // Adds a verse to storage
 
-        System.out.println("Will code later");
-        
+        boolean verseSaved = false;
+
+        while(!verseSaved) {
+            boolean validInput = false;
+
+            System.out.println("What verse would you like to add to your saved verses? Format: John 3:16");
+            String verseReference = scanner.nextLine();
+    
+    
+            try {
+                String bookName = bibleService.getVerseBook(verseReference);
+                int chapterNumber = bibleService.getVerseChapter(verseReference);
+                int verseNumber = bibleService.getVerseNumber(verseReference);
+                String verseContent = bibleService.getVerseText(verseReference).strip();
+    
+                BibleVerse verse = new BibleVerse(bookName, chapterNumber, verseNumber, verseContent, userTranslation);
+
+                // Asks User if this is correct verse        
+                while(!validInput) {
+
+                System.out.println("Is this the correct verse: ");
+                System.out.println(verse.getVerseText());
+                System.out.print("Reply (y,n): ");
+                String userValidation = scanner.nextLine().toLowerCase().strip();
+
+                    if(userValidation.equals("y")) {
+                        fileService.saveVerse(verse);
+                        verseSaved = true;
+                        validInput = true;
+                        System.out.println("Verse has been Saved!");
+                    } else if (userValidation.equals("n")) {
+                        validInput = true;
+                    } else {
+                        System.out.println("Please enter either y or n.");
+                    } 
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }    
+
+        }
     }   
     public static void viewVerses() {
         System.out.println("This will be coded up later");
