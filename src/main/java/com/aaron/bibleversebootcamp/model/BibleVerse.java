@@ -15,8 +15,21 @@ public class BibleVerse {
         this.translation = translation;
     }
 
+    // Getters 
+    public String getBookName() {
+        return this.bookName;
+    }
+    public int getChapterNumber() {
+        return this.chapterNumber;
+    }
+    public int getVerseNumber() {
+        return this.verseNumber;
+    }
     public String getVerseText() {
         return this.verseContent;
+    }
+    public String getVerseTranslation() {
+        return this.translation;
     }
 
     @Override

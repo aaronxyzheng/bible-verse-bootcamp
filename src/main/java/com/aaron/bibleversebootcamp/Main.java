@@ -3,6 +3,8 @@ package com.aaron.bibleversebootcamp;
 import com.aaron.bibleversebootcamp.model.*;
 
 import java.util.Scanner;
+import java.io.IOException;
+import java.util.List;
 
 public class Main {
 
@@ -133,7 +135,7 @@ public class Main {
                 String bookName = bibleService.getVerseBook(verseReference);
                 int chapterNumber = bibleService.getVerseChapter(verseReference);
                 int verseNumber = bibleService.getVerseNumber(verseReference);
-                String verseContent = bibleService.getVerseText(verseReference).strip();
+                String verseContent = bibleService.getVerseText(verseReference).strip().split("\n")[0];
     
                 BibleVerse verse = new BibleVerse(bookName, chapterNumber, verseNumber, verseContent, userTranslation);
 
@@ -163,7 +165,34 @@ public class Main {
         }
     }   
     public static void viewVerses() {
-        System.out.println("This will be coded up later");
+        
+
+        try {
+            List<BibleVerse> savedVerses = fileService.listVerses();
+            System.out.println("You have " + savedVerses.size() + " verses saved");
+            while(true) {
+                System.out.println("Would you like to see all your verses? (y,n)");
+                String userInput = scanner.nextLine();
+
+                if(userInput.equals("y")) {
+                    for(BibleVerse verse: savedVerses){
+                        String verseCitation = verse.getBookName() + " " + verse.getChapterNumber() + ":" + verse.getVerseNumber();
+                        System.out.println(verseCitation + "  -  " + verse.getVerseText() + " (" + verse.getVerseTranslation() + ")");
+                    }
+                    break;
+                } else if(userInput.equals("n")) {
+                    System.out.println("Ok.");
+                    break;
+                } else {
+                    System.out.println("You entered something other than y or n.");
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        
+        
     }  
     public static void referenceVerses() {
         
