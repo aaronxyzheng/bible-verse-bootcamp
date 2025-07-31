@@ -1,18 +1,22 @@
 package com.aaron.bibleversebootcamp;
-
+// API
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.io.IOException;
 import java.net.URI;
+// Error
+import java.io.IOException;
+// Inputs/Reading
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import com.aaron.bibleversebootcamp.model.*;
 
-
-import com.google.gson.Gson;
+import com.google.gson.*;
 
 public class BibleService {
     // This class runs everything that has to do with getting verses from the API
+    public Bible currentBible;
 
     // API Stuff
     private static final String API_KEY = System.getenv("BIBLE_API_KEY"); 
@@ -31,6 +35,7 @@ public class BibleService {
         
     }
 
+    // API CALLING
     public static HttpResponse<String> APIRequest(String url) throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
@@ -42,6 +47,42 @@ public class BibleService {
         return response;
     }
 
+    // Bible Data
+    public String verseFormater(String verseInput) throws Exception{
+        // This method shortens something like Genesis 1:1 to GEN.1.1
+        String book;
+        int chapter;
+        int verse;
+
+        if(Character.isDigit(verseInput.charAt(0))) {
+            book = verseInput.split(" ")[0] + " " + verseInput.split(" ")[1];
+            chapter = Integer.parseInt(verseInput.split(" ")[2].split(":")[0]);
+            verse = Integer.parseInt(verseInput.split(" ")[2].split(":")[1]);
+        } else {
+            book = verseInput.split(" ")[0];
+            chapter = Integer.parseInt(verseInput.split(" ")[1].split(":")[0]);
+            verse = Integer.parseInt(verseInput.split(" ")[1].split(":")[1]);
+        }
+
+        String bookAbbreviation = "";
+
+        
+        InputStream is = getClass().getClassLoader().getResourceAsStream("BookAbbreviation.json");
+        JsonArray books = JsonParser.parseReader(new InputStreamReader(is)).getAsJsonArray();
+        for(JsonElement element : books) {
+            JsonObject object = element.getAsJsonObject();
+            if(object.get("name").getAsString().equalsIgnoreCase(book)) {
+                bookAbbreviation = object.get("abbr").getAsString();
+            } 
+        }
+
+        if(bookAbbreviation.equals("")) {
+            return "";
+        }
+
+        return bookAbbreviation.toUpperCase() + "." + chapter + "." + verse;
+    }
+    
     public Bible getBibleTranslation(String userTranslation, String userLanguage) {
         // This method is in charge of getting the bible the user wants"=
 
@@ -74,5 +115,18 @@ public class BibleService {
         }
         
     } 
+
+
+    public String getVerseText(String userInput) throws Exception {
+        
+        String bibleID = currentBible.id;
+        String verseID = verseFormater(userInput);
+        
+        String verseResponse = BibleService.APIRequest(BASE_URL + "/v1/bibles/" + bibleID + "/verses/" + verseID).body();
+
+        return verseResponse;
+
+    }
+    
 }
 
