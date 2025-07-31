@@ -136,6 +136,7 @@ public class Main {
                 System.out.println("Please try again.");
             }
 
+            System.out.println(" ");
             System.out.println(verseResponse);
         }
     }  

@@ -47,7 +47,42 @@ public class BibleService {
         return response;
     }
 
-    // Bible Data
+
+    
+    public Bible getBibleTranslation(String userTranslation, String userLanguage) {
+        // This method is in charge of getting the bible the user wants"=
+        
+        try {
+            HttpResponse<String> response = APIRequest(BASE_URL + "/v1/bibles");
+            
+            BibleResponse bibleResponse = gson.fromJson(response.body(), BibleResponse.class);
+            
+            // Iterates through available Translation to check for User's desired Translation.
+            for(Bible bible : bibleResponse.data) {
+                
+                if((bible.abbreviation.toUpperCase().endsWith(userTranslation.toUpperCase()) || // Checks if the User's translation is at the end like KJV in engKJV
+                bible.abbreviation.toUpperCase().startsWith(userTranslation.toUpperCase()) || // Checks if the User's translations is at the front like KJV in KJVeng
+                bible.abbreviation.equalsIgnoreCase(userTranslation)) &&  // Checks if the user's translation exactly matches
+                bible.language.name.equalsIgnoreCase(userLanguage))
+                {
+                    return bible;
+                }
+            }
+            
+            // Only runs if nothing is found.
+            System.out.println("Your bible wasn't found.");
+            System.out.println("Unfortunately because this is a small user project many known bible translations are not accessible.");
+            System.out.println("Try instead using the KJV");
+            return null;
+            
+        } catch (Exception e) {
+            System.err.println("There's been an error: " + e.getMessage());
+            return null;
+        }
+        
+    } 
+
+    // Getting Bible Verse
     public String verseFormater(String verseInput) throws Exception{
         // This method shortens something like Genesis 1:1 to GEN.1.1
         String book;
@@ -82,51 +117,23 @@ public class BibleService {
 
         return bookAbbreviation.toUpperCase() + "." + chapter + "." + verse;
     }
-    
-    public Bible getBibleTranslation(String userTranslation, String userLanguage) {
-        // This method is in charge of getting the bible the user wants"=
-
-        try {
-            HttpResponse<String> response = APIRequest(BASE_URL + "/v1/bibles");
-
-            BibleResponse bibleResponse = gson.fromJson(response.body(), BibleResponse.class);
-
-            // Iterates through available Translation to check for User's desired Translation.
-            for(Bible bible : bibleResponse.data) {
-
-                if((bible.abbreviation.toUpperCase().endsWith(userTranslation.toUpperCase()) || // Checks if the User's translation is at the end like KJV in engKJV
-                    bible.abbreviation.toUpperCase().startsWith(userTranslation.toUpperCase()) || // Checks if the User's translations is at the front like KJV in KJVeng
-                    bible.abbreviation.equalsIgnoreCase(userTranslation)) &&  // Checks if the user's translation exactly matches
-                    bible.language.name.equalsIgnoreCase(userLanguage))
-                {
-                    return bible;
-                }
-            }
-            
-            // Only runs if nothing is found.
-            System.out.println("Your bible wasn't found.");
-            System.out.println("Unfortunately because this is a small user project many known bible translations are not accessible.");
-            System.out.println("Try instead using the KJV");
-            return null;
-            
-        } catch (Exception e) {
-            System.err.println("There's been an error: " + e.getMessage());
-            return null;
-        }
-        
-    } 
-
-
     public String getVerseText(String userInput) throws Exception {
         
+        // Gets API Responese for Verse Request
         String bibleID = currentBible.id;
         String verseID = verseFormater(userInput);
-        
         String verseResponse = BibleService.APIRequest(BASE_URL + "/v1/bibles/" + bibleID + "/verses/" + verseID).body();
 
-        return verseResponse;
+        // Turns API Response to readable verse
+        JsonObject obj = JsonParser.parseString(verseResponse).getAsJsonObject();
+        String verseText = obj.getAsJsonObject("data").get("content").getAsString();
+        verseText = verseText.replaceAll("<[^>]*>","").trim(); // Removes HTML
+        verseText = verseText.replaceFirst("^\\d+", "").trim(); // Removes Digits in the front;
+
+        return verseText + "\n -" + userInput;
 
     }
-    
+
 }
+
 
