@@ -246,22 +246,56 @@ public class Main {
     }  
     public static void removeSavedVerses() {
         try {
-            // Printing out the verses stored
-            List<BibleVerse> savedVerses = fileService.listVerses(); // Creates Object that is List of the saved Bible Verses
-            for(BibleVerse verse : savedVerses) {
-                String verseCitation = verse.getBookName() + " " + verse.getChapterNumber() + ":" + verse.getVerseNumber();
-                System.out.println(verseCitation + "  -  " + verse.getVerseText() + " (" + verse.getVerseTranslation() + ")");
-            }
-            // Getting the Verse to Remove
-            System.out.println();
-            System.out.println("These are the verses you have saved. Which one would you like to remove? Format: John 3:16");
-            String verseToRemove = scanner.nextLine();
+            boolean doneSaving = false;
 
-            fileService.removeVerse(verseToRemove);
+            while(!doneSaving) {
+                // Printing out the verses stored
+                List<BibleVerse> savedVerses = fileService.listVerses(); // Creates Object that is List of the saved Bible Verses
+                if(savedVerses.isEmpty()) {
+                    System.out.println("You have 0 verses saved so you can't delete anything");
+                    break;
+                }
+
+                for(BibleVerse verse : savedVerses) {
+                    String verseCitation = verse.getBookName() + " " + verse.getChapterNumber() + ":" + verse.getVerseNumber();
+                    System.out.println(verseCitation + "  -  " + verse.getVerseText() + " (" + verse.getVerseTranslation() + ")");
+                }
+                // Getting the verse that user wants to remove
+                System.out.println();
+                System.out.println("These are the verses you have saved. Which one would you like to remove? Format: John 3:16");
+                String verseToRemove = scanner.nextLine();
+                // Removing the Verse
+                fileService.removeVerse(verseToRemove);
+
+                //Making sure the verse got removed
+                List<BibleVerse> verseList = fileService.listVerses();
+                if(verseList.size() == savedVerses.size()) {
+                    System.out.println("There was an error. Are you sure you entered the verse correctly?");
+                } else {
+                    System.out.println("Verse removed");
+                }
+
+                // Asking if User wants to remove another verse.
+                System.out.println("Would you like to remove any other verse? (y,n)");
+                String userInput = scanner.nextLine().toLowerCase().strip(); 
+
+                while(true) {
+                    if(userInput.equals("y")) {
+                        clearScreen();
+                        break;
+                    } else if(userInput.equals("n")) {
+                        doneSaving = true;
+                        break;
+                    } else {
+                        System.out.println("You entered something other than y or n.");
+                    }
+                }
+            }
 
             System.out.print("Input anything to go back to home:");
-            @SuppressWarnings("unused")
-            String unused = scanner.nextLine();
+                @SuppressWarnings("unused")
+                String unused = scanner.nextLine();
+
 
         } catch (Exception e) {
             System.out.println("Something went wrong.");
