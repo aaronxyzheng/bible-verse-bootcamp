@@ -119,7 +119,13 @@ public class BibleService {
 
         // Turns API Response to readable verse
         JsonObject obj = JsonParser.parseString(verseResponse).getAsJsonObject();
-        String verseText = obj.getAsJsonObject("data").get("content").getAsString();
+        JsonObject data = obj.getAsJsonObject("data");
+
+        if (data == null || !data.has("content")) {
+            return "";
+        }
+
+        String verseText = data.get("content").getAsString();
         verseText = verseText.replaceAll("<[^>]*>","").trim(); // Removes HTML
         verseText = verseText.replaceFirst("^\\d+", "").trim(); // Removes Digits in the front;
 

@@ -19,9 +19,10 @@ public class Main {
 
         fileService.initializeOnStartup();
 
-        clearScreen(); // Resets the Terminal
+        clearScreen();
         intro();
         getUserTranslation();
+        clearScreen();
         while(true){
             homeScreen();
         }
@@ -140,6 +141,12 @@ public class Main {
                 int verseNumber = bibleService.getVerseNumber(verseReference);
                 String verseContent = bibleService.getVerseText(verseReference).strip().split("\n")[0];
     
+                if(verseContent.equals("")) {
+                    System.out.println("");
+                    System.out.println("That verse does not exist.");
+                    return;
+                }
+
                 BibleVerse verse = new BibleVerse(bookName, chapterNumber, verseNumber, verseContent, userTranslation);
 
                 // Asks User if this is correct verse        
@@ -212,7 +219,8 @@ public class Main {
                 } else {
                     System.out.println("You entered something other than y or n.");
                 }
-
+            
+            // Let's User Go Back to Home
             System.out.println("Input anything to go back to home.");
             @SuppressWarnings("unused")
             String unused = scanner.nextLine();
@@ -237,6 +245,9 @@ public class Main {
 
             try {
                 verseResponse = bibleService.getVerseText(userVerse);
+                if(verseResponse.equals("")) {
+                    verseResponse = "That verse does not exist.";
+                }
             } catch (Exception e) {
                 System.err.println(e.getMessage());
                 System.out.println("Please try again.");
@@ -244,7 +255,26 @@ public class Main {
 
             System.out.println(" ");
             System.out.println(verseResponse);
+            System.out.println(" ");
+
+            while(true) {
+                System.out.println("Would you like to reference another verse? (y,n)");
+                String userInput = scanner.nextLine().toLowerCase().strip();
+                if(userInput.equals("y")) {
+                    verseResponse = "";
+                    break;
+                } else if(userInput.equals("n")) {
+                    break;
+                } else {
+                    System.out.println("You've inputed something other than y or n.");
+                }
+            }
         }
+
+        System.out.println("Input anything to go back to home.");
+        @SuppressWarnings("unused")
+        String unused = scanner.nextLine();
+
     }  
     public static void practiceVerses() {
         System.out.println("This will be coded up later");
