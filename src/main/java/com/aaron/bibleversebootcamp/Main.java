@@ -22,7 +22,10 @@ public class Main {
         clearScreen(); // Resets the Terminal
         intro();
         getUserTranslation();
-        homeScreen();
+        while(true){
+            homeScreen();
+        }
+        
 
         
     }
@@ -120,9 +123,9 @@ public class Main {
 
     // These methods are the four the user can do in the home screen
     public static void addVerses() {
-        // Adds a verse to storage
+        // addVerses() adds a verse to be saved in saved-verses.json
 
-        boolean verseSaved = false;
+        boolean verseSaved = false; // Makes sure user has saved as many verses as they want
 
         while(!verseSaved) {
             boolean validInput = false;
@@ -149,9 +152,29 @@ public class Main {
 
                     if(userValidation.equals("y")) {
                         fileService.saveVerse(verse);
-                        verseSaved = true;
                         validInput = true;
                         System.out.println("Verse has been Saved!");
+
+                        // Checks if User Wants to input another verse
+                        boolean validInput2 = false;
+                        while(!validInput2) {
+
+
+                            System.out.println("Would you like to save another verse? (y,n)");
+                            String saveAgain = scanner.nextLine().toLowerCase().strip();
+
+                            if(saveAgain.equals("y")) {
+                                validInput2 = true;
+                                continue;
+                            } else if(saveAgain.equals("n")) {
+                                validInput2 = true;
+                                verseSaved = true;
+                            } else {
+                                System.out.println("You have inputed something other than y or n");
+                            }
+                        }
+                        
+
                     } else if (userValidation.equals("n")) {
                         validInput = true;
                     } else {
@@ -163,6 +186,9 @@ public class Main {
             }    
 
         }
+        System.out.println("Input anything to go back to home.");
+        @SuppressWarnings("unused")
+        String unused = scanner.nextLine();
     }   
     public static void viewVerses() {
         
@@ -186,10 +212,16 @@ public class Main {
                 } else {
                     System.out.println("You entered something other than y or n.");
                 }
+
+            System.out.println("Input anything to go back to home.");
+            @SuppressWarnings("unused")
+            String unused = scanner.nextLine();
+
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+
 
         
         
