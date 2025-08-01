@@ -21,14 +21,44 @@ public class Main {
 
         clearScreen();
         intro();
-        getUserTranslation();
+
+        loadSettings(); // Checks for saved settings and gets Bible Translation + ID
 
         while(true){
-            clearScreen();
             homeScreen();
         }    
     }
+
+    // Loads user-settings.json for user translation preferences;
+    public static void loadSettings() {
+        try {
+            UserSettings userSettings = fileService.loadSettings();
+            if(userSettings == null) {
+                getUserTranslation();
+            } else {
+                System.out.println("Saved bible translation setting has been found!"); 
+                System.out.println("Would you like to use: " +  userSettings.getBibleName());
+                while(true) {
+                    System.out.print("Input y or n: ");
     
+                    String userInput = scanner.nextLine().toLowerCase().strip();
+                    if(userInput.equals("y")) {
+                        bibleService.currentBible = new Bible();
+                        bibleService.currentBible.setID(userSettings.getBibleID());
+                        break;
+                    } else if(userInput.equals("n")) {
+                        getUserTranslation();
+                        break;
+                    } else {
+                        System.out.println("You have inputed something other than y or n!");
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("There was an error");
+            e.printStackTrace();
+        }
+    }
     // These methods have to do with Terminal Interface
     public static void clearScreen() {
         System.out.print("\033[H\033[2J");
@@ -109,7 +139,7 @@ public class Main {
             }
 
             // Checks if this is the desired translation.
-            System.out.println("Result found for: " + bibleService.currentBible.name + " (" + bibleService.currentBible.abbreviation + ")");
+            System.out.println("Result found for: " + bibleService.currentBible.getName() + " (" + bibleService.currentBible.getAbbreviation() + ")");
             System.out.println("Is this the bible you're look for? (y/n)");
     
             boolean correctBible = false;
@@ -117,6 +147,26 @@ public class Main {
             while(!correctBible) {
                 String userValidation = scanner.nextLine().strip().toLowerCase();
                 if(userValidation.equals("y")) {
+
+                    // Asks if User wants to save settings to user-settions
+                    while(true) {
+                        System.out.print("Would you like to save these settings for easier use next time? (y,n): ");
+                        String saveSetting = scanner.nextLine().toLowerCase().strip();
+    
+                        if(saveSetting.equals("y")) {
+                            try {
+                                fileService.setSettings(bibleService.currentBible.getName(), bibleService.currentBible.getID());
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            break;
+                        } else if(saveSetting.equals("n")) {
+                            break;
+                        } else {
+                            System.out.println("You've inputed something other than y or n.");
+                        }
+                    }
+
                     correctBible = true;
                 } else if(userValidation.equals("n")) {
                     System.out.println("Please try again then.");

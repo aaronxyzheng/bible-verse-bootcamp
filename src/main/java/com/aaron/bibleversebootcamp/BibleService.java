@@ -60,10 +60,10 @@ public class BibleService {
             // Iterates through available Translation to check for User's desired Translation.
             for(Bible bible : bibleResponse.data) {
                 
-                if((bible.abbreviation.toUpperCase().endsWith(userTranslation.toUpperCase()) || // Checks if the User's translation is at the end like KJV in engKJV
-                bible.abbreviation.toUpperCase().startsWith(userTranslation.toUpperCase()) || // Checks if the User's translations is at the front like KJV in KJVeng
-                bible.abbreviation.equalsIgnoreCase(userTranslation)) &&  // Checks if the user's translation exactly matches
-                bible.language.name.equalsIgnoreCase(userLanguage))
+                if((bible.getAbbreviation().toUpperCase().endsWith(userTranslation.toUpperCase()) || // Checks if the User's translation is at the end like KJV in engKJV
+                bible.getAbbreviation().toUpperCase().startsWith(userTranslation.toUpperCase()) || // Checks if the User's translations is at the front like KJV in KJVeng
+                bible.getAbbreviation().equalsIgnoreCase(userTranslation)) &&  // Checks if the user's translation exactly matches
+                bible.getLanguage().name.equalsIgnoreCase(userLanguage))
                 {
                     return bible;
                 }
@@ -113,7 +113,7 @@ public class BibleService {
     public String getVerseText(String verseInput) throws Exception {
         
         // Gets API Responese for Verse Request
-        String bibleID = currentBible.id;
+        String bibleID = currentBible.getID();
         String verseID = verseFormater(verseInput);
         String verseResponse = BibleService.APIRequest(BASE_URL + "/v1/bibles/" + bibleID + "/verses/" + verseID).body();
 

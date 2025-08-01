@@ -11,9 +11,27 @@ import com.google.gson.reflect.TypeToken;
 
 public class FileService {
     private static final String DATA_DIRECTORY = "data";
+    private static final String USER_SETTINGS = "user-settings.json";
     private static final String SAVED_VERSES = "saved-verses.json";
 
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+    public UserSettings loadSettings() throws Exception{
+        try(FileReader reader = new FileReader(DATA_DIRECTORY + "/" + USER_SETTINGS)) {
+            UserSettings userSettings = gson.fromJson(reader, UserSettings.class);
+            return userSettings;
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+    public void setSettings(String bibleName, String bibleID) throws Exception {
+        UserSettings userSettings = new UserSettings(bibleName, bibleID);
+        try(FileWriter writer = new FileWriter(DATA_DIRECTORY + "/" + USER_SETTINGS)) {
+            gson.toJson(userSettings, writer);
+        } catch (Exception e) {
+            throw e;
+        }
+    }
 
     public void initializeOnStartup() {
         // Creates the needed directories and files in case they don't exist
@@ -32,6 +50,8 @@ public class FileService {
             
         }
     }
+    
+    // Methods that have to do with saved-veres.json and bible verses
     public void saveVerse(BibleVerse bibleVerse) throws IOException {
         List<BibleVerse> verses = listVerses();
 
@@ -44,7 +64,6 @@ public class FileService {
             gson.toJson(verses, writer);
         }
     }
-
     public void removeVerse(String verseToRemove) throws Exception {
         String bookName = Main.bibleService.getVerseBook(verseToRemove);
         int chapterNumber = Main.bibleService.getVerseChapter(verseToRemove);
@@ -65,7 +84,6 @@ public class FileService {
             }
         } 
     }
-
     public List<BibleVerse> listVerses() throws IOException {
         // Returns a List of BibleVerses
 
