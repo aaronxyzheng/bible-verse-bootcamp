@@ -22,13 +22,11 @@ public class Main {
         clearScreen();
         intro();
         getUserTranslation();
+
         while(true){
             clearScreen();
             homeScreen();
-        }
-        
-
-        
+        }    
     }
     
     // These methods have to do with Terminal Interface
@@ -76,7 +74,6 @@ public class Main {
                     validInput = true;
                 default:    
                     System.out.println("Invalid choice. Please pick a number between 1-4");
-
             }
         }
         System.out.println();
@@ -85,13 +82,14 @@ public class Main {
     // These methods have to do with API and Logic
     public static void getUserTranslation() {
             
-        // Gets User Translation + Language
-        System.out.println("What Bible Translation would you like to use?");
-        userTranslation = scanner.nextLine();
-        System.out.println("What language is it in? English, Spanish, Chinese etc.");
-        userTranslationLanguage = scanner.nextLine();
-
         while(bibleService.currentBible == null) {
+            // Gets User Translation + Language
+            System.out.println("What Bible Translation would you like to use?");
+            userTranslation = scanner.nextLine();
+            System.out.println("What language is it in? English, Spanish, Chinese etc.");
+            userTranslationLanguage = scanner.nextLine();
+
+
             // API Call
             bibleService.currentBible = bibleService.getBibleTranslation(userTranslation, userTranslationLanguage);
     
@@ -111,6 +109,7 @@ public class Main {
                     correctBible = true;
                 } else if(userValidation.equals("n")) {
                     System.out.println("Please try again then.");
+                    bibleService.currentBible = null;
                     break;
                 } else {
                     System.out.println("You have inputed something other than 'y' or 'n'");
