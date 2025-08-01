@@ -1,10 +1,40 @@
-// This class models each bible with an id, translation, abbreviation and language when requested from API.bible
-
 package com.aaron.bibleversebootcamp.model;
 
 public class Bible {
-    public String id; // Ex: de4e12af7f28f599-02
-    public Language language; // Ex: English
-    public String name; // Ex: New International Version
-    public String abbreviation; // Ex: NIV
+    private String id;
+    private Language language;
+    private String name;
+    private String abbreviation;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public Language getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(Language language) {
+        this.language = language;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getAbbreviation() {
+        return abbreviation;
+    }
+
+    public void setAbbreviation(String abbreviation) {
+        this.abbreviation = abbreviation;
+    }
 }
