@@ -22,8 +22,8 @@ public class Main {
         clearScreen();
         intro();
         getUserTranslation();
-        clearScreen();
         while(true){
+            clearScreen();
             homeScreen();
         }
         
@@ -48,37 +48,34 @@ public class Main {
     public static void homeScreen() {
         // Where the user chooses what to do
 
-        System.out.println("What would you like to do?");
-        System.out.println();
-        System.out.println("1. Add new verses");
-        System.out.println("2. View saved verses");
-        System.out.println("3. Look up a verse");
-        System.out.println("4. Practice saved verses");
-
-        String userChoice = scanner.nextLine();
         boolean validInput = false;
 
         while(!validInput) {
+
+            System.out.println("What would you like to do?");
+            System.out.println();
+            System.out.println("1. Add new verses");
+            System.out.println("2. View saved verses");
+            System.out.println("3. Look up a verse");
+            System.out.println("4. Practice saved verses");
+
+            String userChoice = scanner.nextLine();
+
             switch(userChoice){
                 case "1":
                     addVerses();
                     validInput = true;
-                    break;
                 case "2":
                     viewVerses();
                     validInput = true;
-                    break;
                 case "3":
                     referenceVerses();
                     validInput = true;
-                    break;
                 case "4":
                     practiceVerses();
                     validInput = true;
-                    break;
                 default:    
                     System.out.println("Invalid choice. Please pick a number between 1-4");
-                    break;
 
             }
         }
@@ -219,13 +216,14 @@ public class Main {
                 } else {
                     System.out.println("You entered something other than y or n.");
                 }
-            
+            }
+
             // Let's User Go Back to Home
-            System.out.println("Input anything to go back to home.");
+            System.out.println("");
+            System.out.print("Input anything to go back to home:");
             @SuppressWarnings("unused")
             String unused = scanner.nextLine();
 
-            }
         } catch (IOException e) {
             e.printStackTrace();
         }
