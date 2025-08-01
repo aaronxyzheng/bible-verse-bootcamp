@@ -54,26 +54,37 @@ public class Main {
             System.out.println();
             System.out.println("1. Add new verses");
             System.out.println("2. View saved verses");
-            System.out.println("3. Look up a verse");
-            System.out.println("4. Practice saved verses");
+            System.out.println("3. Remove a saved verse");
+            System.out.println("4. Look up a verse");
+            System.out.println("5. Practice saved verses");
 
             String userChoice = scanner.nextLine();
+            clearScreen();
 
             switch(userChoice){
                 case "1":
                     addVerses();
                     validInput = true;
+                    break;
                 case "2":
-                    viewVerses();
+                    viewSavedVerses();
                     validInput = true;
+                    break;
                 case "3":
+                    removeSavedVerses();
+                    validInput = true;
+                    break;
+                case "4":
                     referenceVerses();
                     validInput = true;
-                case "4":
+                    break;
+                case "5":
                     practiceVerses();
                     validInput = true;
+                    break;
                 default:    
                     System.out.println("Invalid choice. Please pick a number between 1-4");
+                    break;
             }
         }
         System.out.println();
@@ -118,31 +129,31 @@ public class Main {
         }
     }
 
-    // These methods are the four the user can do in the home screen
+    // These methods are the five the user can do in the home screen
     public static void addVerses() {
         // addVerses() adds a verse to be saved in saved-verses.json
 
-        boolean verseSaved = false; // Makes sure user has saved as many verses as they want
+        boolean doneSaving = false; // Makes sure user has saved as many verses as they want
 
-        while(!verseSaved) {
+        while(!doneSaving) {
             boolean validInput = false;
 
             System.out.println("What verse would you like to add to your saved verses? Format: John 3:16");
             String verseReference = scanner.nextLine();
-    
-    
+
             try {
+                // Gets values of the verse for the API Request
                 String bookName = bibleService.getVerseBook(verseReference);
                 int chapterNumber = bibleService.getVerseChapter(verseReference);
                 int verseNumber = bibleService.getVerseNumber(verseReference);
                 String verseContent = bibleService.getVerseText(verseReference).strip().split("\n")[0];
-    
-                if(verseContent.equals("")) {
+                // Makes sure verse Actually Exists
+                if(verseContent.equals("")) { 
                     System.out.println("");
                     System.out.println("That verse does not exist.");
                     return;
                 }
-
+                // Creates Bible Verse Object
                 BibleVerse verse = new BibleVerse(bookName, chapterNumber, verseNumber, verseContent, userTranslation);
 
                 // Asks User if this is correct verse        
@@ -154,6 +165,7 @@ public class Main {
                 String userValidation = scanner.nextLine().toLowerCase().strip();
 
                     if(userValidation.equals("y")) {
+                        // If the verse is correct save the verse
                         fileService.saveVerse(verse);
                         validInput = true;
                         System.out.println("Verse has been Saved!");
@@ -171,7 +183,7 @@ public class Main {
                                 continue;
                             } else if(saveAgain.equals("n")) {
                                 validInput2 = true;
-                                verseSaved = true;
+                                doneSaving = true;
                             } else {
                                 System.out.println("You have inputed something other than y or n");
                             }
@@ -193,12 +205,13 @@ public class Main {
         @SuppressWarnings("unused")
         String unused = scanner.nextLine();
     }   
-    public static void viewVerses() {
+    public static void viewSavedVerses() {
         
-
         try {
-            List<BibleVerse> savedVerses = fileService.listVerses();
+            List<BibleVerse> savedVerses = fileService.listVerses(); // Creates Object that is List of the saved Bible Verses
+            
             System.out.println("You have " + savedVerses.size() + " verses saved");
+            
             while(true) {
                 System.out.println("Would you like to see all your verses? (y,n)");
                 String userInput = scanner.nextLine();
@@ -231,6 +244,30 @@ public class Main {
         
         
     }  
+    public static void removeSavedVerses() {
+        try {
+            // Printing out the verses stored
+            List<BibleVerse> savedVerses = fileService.listVerses(); // Creates Object that is List of the saved Bible Verses
+            for(BibleVerse verse : savedVerses) {
+                String verseCitation = verse.getBookName() + " " + verse.getChapterNumber() + ":" + verse.getVerseNumber();
+                System.out.println(verseCitation + "  -  " + verse.getVerseText() + " (" + verse.getVerseTranslation() + ")");
+            }
+            // Getting the Verse to Remove
+            System.out.println();
+            System.out.println("These are the verses you have saved. Which one would you like to remove? Format: John 3:16");
+            String verseToRemove = scanner.nextLine();
+
+            fileService.removeVerse(verseToRemove);
+
+            System.out.print("Input anything to go back to home:");
+            @SuppressWarnings("unused")
+            String unused = scanner.nextLine();
+
+        } catch (Exception e) {
+            System.out.println("Something went wrong.");
+            e.printStackTrace();
+        }
+    }
     public static void referenceVerses() {
         
         String verseResponse = "";

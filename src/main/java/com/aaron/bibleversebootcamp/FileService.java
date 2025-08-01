@@ -45,6 +45,27 @@ public class FileService {
         }
     }
 
+    public void removeVerse(String verseToRemove) throws Exception {
+        String bookName = Main.bibleService.getVerseBook(verseToRemove);
+        int chapterNumber = Main.bibleService.getVerseChapter(verseToRemove);
+        int verseNumber = Main.bibleService.getVerseNumber(verseToRemove);
+
+        try (Reader reader = new FileReader(DATA_DIRECTORY + "/" + SAVED_VERSES);){
+            Type listType = new TypeToken<List<BibleVerse>>() {}.getType();
+            List<BibleVerse> savedVerses = gson.fromJson(reader, listType);
+
+            savedVerses.removeIf(verse -> 
+                verse.getBookName().equals(bookName) && 
+                verse.getChapterNumber() == chapterNumber && 
+                verse.getVerseNumber() == verseNumber
+            );
+            
+            try (Writer writer = new FileWriter(DATA_DIRECTORY + "/" + SAVED_VERSES)) {
+                gson.toJson(savedVerses, writer);
+            }
+        } 
+    }
+
     public List<BibleVerse> listVerses() throws IOException {
         // Returns a List of BibleVerses
 
