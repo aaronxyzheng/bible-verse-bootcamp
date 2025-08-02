@@ -429,7 +429,7 @@ public class Main {
                     validInput = true;
                     break;
                 case "3":
-                    givevVerseText(verseList);
+                    giveVerseText(verseList);
                     validInput = true;
                     break;
                 default:
@@ -493,10 +493,72 @@ public class Main {
 
     }
     public static void giveCitation(List<BibleVerse> verseList) {
+        Collections.shuffle(verseList);
 
+        int score = 0;
+        int questions = verseList.size();
+
+        for (BibleVerse verse : verseList) {
+            try {
+                System.out.println();
+                System.out.println(verse.getVerseText());
+                System.out.println("Which verse is this? Format: John 3:16");
+                System.out.print("input: ");
+    
+                String userGuess = scanner.nextLine();
+                if(bibleService.getVerseBook(userGuess).equalsIgnoreCase(verse.getBookName()) &&
+                   bibleService.getVerseChapter(userGuess) == verse.getChapterNumber() &&
+                   bibleService.getVerseNumber(userGuess) == verse.getVerseNumber()) {
+                   
+                    System.out.println("Correct!");
+                    score += 1;
+                } else {
+                    String correctAnswer = verse.getBookName() + " " + verse.getChapterNumber() + ":" + verse.getVerseNumber();
+                    System.out.println("Incorrect. The correct answer is: " + correctAnswer);
+                }
+
+            } catch (Exception e) {
+                System.out.println("There's been an error!");
+                e.printStackTrace();
+            }
+        }
+
+        System.out.println();
+        System.out.println("You got: " + score + "/" + questions + ".");
     }
-    public static void givevVerseText(List<BibleVerse> verseList) {
+    public static void giveVerseText(List<BibleVerse> verseList) {
+        Collections.shuffle(verseList);
 
+        int score = 0;
+        int questions = verseList.size();
+
+        for(BibleVerse verse : verseList) {
+            try {
+
+                System.out.println();
+                System.out.println("What is the text for: " + verse.getBookName() + " " + verse.getChapterNumber() + ":" + verse.getVerseNumber());
+                System.out.print("Your Answer: ");
+
+                String userGuess = scanner.nextLine();
+                String answer = verse.getVerseText();
+
+                String cleanedGuess = userGuess.replaceAll("[^a-zA-Z0-9]", "");
+                String cleanedAnswer = answer.replaceAll("[^a-zA-Z0-9]", "");
+
+                if(cleanedGuess.equalsIgnoreCase(cleanedAnswer)) {
+                    System.out.println("Correct.");
+                    score += 1;
+                } else {
+                    System.out.println("Incorrect.");
+                    System.out.println("Real Answer: " + answer);
+                }
+
+            } catch (Exception e) {
+                System.out.println("There's been an error");
+            }
+        }
+
+        System.out.println();
+        System.out.println("You got: " + score + "/" + questions + ".");
     }
-
 }
