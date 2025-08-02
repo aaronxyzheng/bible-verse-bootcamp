@@ -3,6 +3,7 @@
 
 A Java terminal application for referencing, memorizing and practicing Bible verses with interactive quiz modes.
 
+## Features
 ### 📚 Verse Management 
 -  **Add Verses**: Save your favorite Bible verses for later study 
 -   **View Collection**: Browse all your saved verses 
