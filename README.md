@@ -4,21 +4,12 @@
 A Java terminal application for referencing, memorizing and practicing Bible verses with interactive quiz modes.
 
 ## Features
-### 📚 Verse Management 
--  **Add Verses**: Save your favorite Bible verses for later study 
--   **View Collection**: Browse all your saved verses 
--  **Remove Verses**: Clean up your collection as needed 
--  **Quick Reference**: Look up any Bible verse instantly 
 
-### 🎯 Practice Modes 
--  **Easy**: Fill-in-the-blank questions 
--  **Medium**: Given a verse, identify the reference 
--  **Hard**: Given a reference, recite the verse 
+- 📚 **Verse Management**: Add, view, and organize your favorite Bible verses
+- 🎯 **Interactive Practice**: Three difficulty modes for memorization practice
+- 🌍 **Multi-Translation Support**: Works with multiple Bible translations and languages
+- ⚡ **Quick Reference**: Instant verse lookup functionality
 
-### 🌍 Multi-Translation Support 
-- Works with multiple Bible translations (KJV, WEB, etc.) -
--  Multi-language Bible Translations (English, Spanish, Chinese, and more) 
--  Saves your preferred translation for future sessions
 
 ## Prerequisites
 
