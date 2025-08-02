@@ -2,9 +2,8 @@ package com.aaron.bibleversebootcamp;
 
 import com.aaron.bibleversebootcamp.model.*;
 
-import java.util.Scanner;
 import java.io.IOException;
-import java.util.List;
+import java.util.*; // For List, Collections, Random
 
 public class Main {
 
@@ -422,15 +421,15 @@ public class Main {
     
             switch(userInput) {
                 case "1":
-                    fillTheBlank();
+                    fillTheBlank(verseList);
                     validInput = true;
                     break;
                 case "2":
-                    giveCitation();
+                    giveCitation(verseList);
                     validInput = true;
                     break;
                 case "3":
-                    givevVerseText();
+                    givevVerseText(verseList);
                     validInput = true;
                     break;
                 default:
@@ -447,13 +446,56 @@ public class Main {
 
     }
     // Methods for the Verse Quizzing/Training portion
-    public static void fillTheBlank() {
+    public static void fillTheBlank(List<BibleVerse> verseList) {
+        Collections.shuffle(verseList);
+
+        Random random = new Random();
+        int score = 0;
+        int questions = verseList.size();
+
+        for(BibleVerse verse : verseList) {
+            String verseText = verse.getVerseText();
+            String[] verseTextArray = verseText.split(" ");
+
+            int blankStringNumber = random.nextInt(verseTextArray.length);
+            StringBuilder fullVerse = new StringBuilder();
+            String answer = verseTextArray[blankStringNumber];
+
+            // Buildes Verse Text with blank
+            for(int i = 0; i < verseTextArray.length; i++) {
+                if(i > 0) fullVerse.append(" ");
+
+                if(i == blankStringNumber) {
+                    fullVerse.append("___");
+                } else {
+                    fullVerse.append(verseTextArray[i]);
+                }
+            }
+            // Prints Verse Text with blank
+            System.out.println(fullVerse.toString());
+            System.out.println("What is the word in the blank: ");
+            String userGuess = scanner.nextLine();
+            // Removes punctuations when comparing
+            String cleanAnswer = answer.replaceAll("[^a-zA-Z]", "");
+            String cleanGuess = userGuess.replaceAll("[^a-zA-Z]", "");
+            // Validates User's Answer.
+            if(cleanGuess.equalsIgnoreCase(cleanAnswer)) {
+                System.out.println("That is correct!");
+                score += 1;
+            } else {
+                System.out.println("Incorrect. The correct answer is: " + cleanAnswer);
+            }
+        }
+
+        System.out.println();
+        System.out.println("You got: " + score + "/" + questions + ".");
+
 
     }
-    public static void giveCitation() {
+    public static void giveCitation(List<BibleVerse> verseList) {
 
     }
-    public static void givevVerseText() {
+    public static void givevVerseText(List<BibleVerse> verseList) {
 
     }
 
