@@ -16,6 +16,7 @@ public class FileService {
 
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
+    // Methods that have to do with user Settings
     public UserSettings loadSettings() throws Exception{
         try(FileReader reader = new FileReader(DATA_DIRECTORY + "/" + USER_SETTINGS)) {
             UserSettings userSettings = gson.fromJson(reader, UserSettings.class);

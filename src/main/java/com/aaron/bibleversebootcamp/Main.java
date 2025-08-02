@@ -119,7 +119,13 @@ public class Main {
         }
         System.out.println();
     }
-    
+    public static void returnHome() {
+        // Method that allows the user to input when they want to go home. 
+        System.out.println("Input anything to go back to home.");
+        @SuppressWarnings("unused")
+        String unused = scanner.nextLine();
+    }
+
     // These methods have to do with API and Logic
     public static void getUserTranslation() {
             
@@ -251,9 +257,7 @@ public class Main {
             }    
 
         }
-        System.out.println("Input anything to go back to home.");
-        @SuppressWarnings("unused")
-        String unused = scanner.nextLine();
+        returnHome();
     }   
     public static void viewSavedVerses() {
         
@@ -282,9 +286,7 @@ public class Main {
 
             // Let's User Go Back to Home
             System.out.println("");
-            System.out.print("Input anything to go back to home:");
-            @SuppressWarnings("unused")
-            String unused = scanner.nextLine();
+            returnHome();
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -342,9 +344,7 @@ public class Main {
                 }
             }
 
-            System.out.print("Input anything to go back to home:");
-                @SuppressWarnings("unused")
-                String unused = scanner.nextLine();
+            returnHome();
 
 
         } catch (Exception e) {
@@ -389,13 +389,72 @@ public class Main {
             }
         }
 
-        System.out.println("Input anything to go back to home.");
-        @SuppressWarnings("unused")
-        String unused = scanner.nextLine();
+        returnHome();
 
     }  
     public static void practiceVerses() {
-        System.out.println("This will be coded up later");
+        
+        try {
+            boolean validInput = false;
+            boolean moreThanThree = true; // Sees if there are more than three verses
+
+            // Checks to see if there are 3 verses or more saved
+            List<BibleVerse> verseList = fileService.listVerses();
+            if(verseList.size() < 3) {
+                System.out.println("Quizzer mode requires 3 or more verses saved! Please add more verses. ");
+                moreThanThree = false;
+            }
+
+            // Practice Mode Intro.
+            if(moreThanThree) {
+                System.out.println("Welcome to Practice Mode how would you like to play?");
+    
+                System.out.println("1. Easy: Fill in the Blanks");
+                System.out.println("2. Medium: Given Verse --> Write Citation");
+                System.out.println("3. Hard: Given Citation --> Write Verse");
+            }
+            
+            // Makes the user input a valid number and calls the correct method.
+            while(!validInput && moreThanThree) {
+            System.out.println("Please input 1, 2, or 3: ");
+    
+            String userInput = scanner.nextLine().strip();
+    
+            switch(userInput) {
+                case "1":
+                    fillTheBlank();
+                    validInput = true;
+                    break;
+                case "2":
+                    giveCitation();
+                    validInput = true;
+                    break;
+                case "3":
+                    givevVerseText();
+                    validInput = true;
+                    break;
+                default:
+                    System.out.println("You have inputed something other than 1, 2, or 3.");
+                    break;
+    
+            }
+
+            returnHome();
+        }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+    // Methods for the Verse Quizzing/Training portion
+    public static void fillTheBlank() {
+
+    }
+    public static void giveCitation() {
+
+    }
+    public static void givevVerseText() {
+
     }
 
 }
